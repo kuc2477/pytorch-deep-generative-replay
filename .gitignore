@@ -99,3 +99,10 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+
+datasets/
+checkpoints/
+.env
+_cache_*
+.download.cgi*
