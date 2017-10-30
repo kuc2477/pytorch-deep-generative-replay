@@ -4,6 +4,7 @@ from tqdm import tqdm
 import torch
 from torch import nn
 from torch.autograd import Variable
+from torch.utils.data import ConcatDataset
 
 
 # ============
@@ -153,11 +154,10 @@ class Scholar(GenerativeMixin, nn.Module):
         data_loader = iter(utils.get_data_loader(
             dataset, batch_size, cuda=self._is_on_cuda()
         ))
-        previous_datasets = previous_datasets or []
-        previous_loaders = [
-            iter(utils.get_data_loader(d, batch_size, cuda=self._is_on_cuda()))
-            for d in previous_datasets
-        ]
+        data_loader_previous = iter(utils.get_data_loader(
+            ConcatDataset(previous_datasets or []), batch_size,
+            cuda=self._is_on_cuda(),
+        ))
         # define a tqdm progress bar.
         progress = tqdm(range(1, iterations+1))
 
@@ -174,7 +174,7 @@ class Scholar(GenerativeMixin, nn.Module):
 
             # sample the replayed training data.
             x_, y_ = (
-                next(previous_loaders) if from_previous_datasets else
+                next(data_loader_previous) if from_previous_datasets else
                 scholar.sample(batch_size) if from_scholar else (None, None)
             )
             if x_ is not None and y_ is not None:
