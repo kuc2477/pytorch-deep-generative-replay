@@ -77,3 +77,12 @@ def validate(model, dataset, test_size=256, cuda=False, verbose=True):
     if verbose:
         print('=> precision: {:.3f}'.format(precision))
     return precision
+
+
+class LambdaModule(nn.Module):
+    def __init__(self, f):
+        super().__init__()
+        self.f = f
+
+    def forward(self, x):
+        return f(x)
