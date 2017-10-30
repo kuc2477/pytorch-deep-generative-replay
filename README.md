@@ -75,7 +75,7 @@ $ ./main.py --test \
 ```
 
 ## Notes
-- I couldn't find the supplementary materials that the authors mentioned in the paper to contain the experimental details. Thus, I arbitrarily chosed a 4-convolutional-layer CNN as a default solver model. Please let me know if you find the materials.
+- I couldn't find the supplementary materials that the authors mentioned in the paper to contain the experimental details. Thus, I arbitrarily chose a 4-convolutional-layer CNN as a default solver model. Please let me know if you find the materials.
 
 ## Reference
 - [Continual Learning with Deep Generative Replay, arxiv:1705.08690](https://arxiv.org/abs/1705.08690)
