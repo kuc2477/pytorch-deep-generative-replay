@@ -32,6 +32,7 @@ def _solver_training_callback(
 
 
 def train(scholar, train_datasets, test_datasets, replay_mode,
+          generator_lambda=10.,
           generator_c_updates_per_g_update=5,
           generator_iterations=2000,
           solver_iterations=1000,
@@ -63,6 +64,7 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
     # scholar model.
     scholar.solver.set_criterion(solver_criterion)
     scholar.solver.set_optimizer(solver_optimizer)
+    scholar.generator.set_lambda(generator_lambda)
     scholar.generator.set_generator_optimizer(generator_g_optimizer)
     scholar.generator.set_critic_optimizer(generator_c_optimizer)
     scholar.generator.set_critic_updates_per_generator_update(

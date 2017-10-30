@@ -78,9 +78,9 @@ class Scholar(GenerativeMixin, nn.Module):
     def train_with_replay(
             self, dataset, scholar=None, previous_datasets=None,
             importance_of_new_task=.5, batch_size=32,
-            generator_iteration=2000,
+            generator_iterations=2000,
             generator_training_callbacks=None,
-            solver_iteration=1000,
+            solver_iterations=1000,
             solver_training_callbacks=None):
 
         # train the generator of the scholar.
@@ -88,7 +88,7 @@ class Scholar(GenerativeMixin, nn.Module):
             self.generator, dataset, scholar,
             importance_of_new_task=importance_of_new_task,
             batch_size=batch_size,
-            iteration=generator_iteration,
+            iterations=generator_iterations,
             training_callbacks=generator_training_callbacks,
         )
 
@@ -97,7 +97,7 @@ class Scholar(GenerativeMixin, nn.Module):
             self.solver, dataset, scholar,
             importance_of_new_task=importance_of_new_task,
             batch_size=batch_size,
-            iteration=solver_iteration,
+            iterations=solver_iterations,
             training_callbacks=solver_training_callbacks,
         )
 
@@ -108,11 +108,11 @@ class Scholar(GenerativeMixin, nn.Module):
 
     def _train_batch_trainable_with_replay(
             self, trainable, dataset, scholar=None, previous_datasets=None,
-            importance_of_new_task=.5, batch_size=32, iteration=1000,
+            importance_of_new_task=.5, batch_size=32, iterations=1000,
             training_callbacks=None):
 
         # scholar and previous datasets cannot be given at the same time.
-        mutex_condition_infringed = not all([
+        mutex_condition_infringed = all([
             scholar is not None,
             not previous_datasets
         ])
@@ -130,7 +130,7 @@ class Scholar(GenerativeMixin, nn.Module):
             for d in previous_datasets
         ]
         # define a tqdm progress bar.
-        progress = tqdm(range(1, iteration+1))
+        progress = tqdm(range(1, iterations+1))
 
         for batch_index in progress:
             # decide from where to sample the training data.
@@ -160,4 +160,4 @@ class Scholar(GenerativeMixin, nn.Module):
                 callback(trainable, progress, batch_index, result)
 
     def _is_on_cuda(self):
-        return iter(self.parameters()).next().is_cuda
+        return next(self.parameters()).is_cuda

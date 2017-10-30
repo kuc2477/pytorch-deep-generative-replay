@@ -113,6 +113,9 @@ class WGAN(dgr.Generator):
         )[0]
         return lamda * ((1-gradients.norm(2, dim=1))**2).mean()
 
+    def _is_on_cuda(self):
+        return next(self.parameters()).is_cuda
+
 
 class CNN(dgr.Solver):
     def __init__(self,
@@ -144,7 +147,7 @@ class CNN(dgr.Solver):
                 previous_conv.out_channels * 2,
                 3, 1 if i >= reducing_layers else 2, 1
             ))
-            self.layers.append(nn.BatchNorm2d())
+            self.layers.append(nn.BatchNorm2d(previous_conv.out_channels * 2))
             self.layers.append(nn.ReLU())
 
         self.layers.append(utils.LambdaModule(lambda x: x.view(x.size(0), -1)))

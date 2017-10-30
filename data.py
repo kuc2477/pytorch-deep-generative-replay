@@ -9,12 +9,11 @@ def _permutate_image_pixels(image, permutation):
     c, h, w = image.size()
     image = image.view(-1, c)
     image = image[permutation, :]
-    image.view(c, h, w)
-    return image
+    return image.view(c, h, w)
 
 
 def get_dataset(name, train=True, permutation=None):
-    dataset = TRAIN_DATASETS[name] if train else TEST_DATASETS[name]
+    dataset = (TRAIN_DATASETS[name] if train else TEST_DATASETS[name])()
     dataset.transform = transforms.Compose([
         dataset.transform,
         transforms.Lambda(lambda x: _permutate_image_pixels(x, permutation)),
@@ -50,23 +49,23 @@ _SVHN_TRAIN_TRANSFORMS = _SVHN_TEST_TRANSFORMS = [
 
 
 TRAIN_DATASETS = {
-    'mnist': datasets.MNIST(
+    'mnist': lambda: datasets.MNIST(
         './datasets/mnist', train=True, download=True,
         transform=transforms.Compose(_MNIST_TRAIN_TRANSFORMS)
     ),
-    'mnist-color': datasets.MNIST(
+    'mnist-color': lambda: datasets.MNIST(
         './datasets/mnist', train=True, download=True,
         transform=transforms.Compose(_MNIST_COLORIZED_TRAIN_TRANSFORMS)
     ),
-    'cifar10': datasets.CIFAR10(
+    'cifar10': lambda: datasets.CIFAR10(
         './datasets/cifar10', train=True, download=True,
         transform=transforms.Compose(_CIFAR_TRAIN_TRANSFORMS)
     ),
-    'cifar100': datasets.CIFAR100(
+    'cifar100': lambda: datasets.CIFAR100(
         './datasets/cifar100', train=True, download=True,
         transform=transforms.Compose(_CIFAR_TRAIN_TRANSFORMS)
     ),
-    'svhn': datasets.SVHN(
+    'svhn': lambda: datasets.SVHN(
         './datasets/svhn', split='train', download=True,
         transform=transforms.Compose(_SVHN_TRAIN_TRANSFORMS)
     ),
@@ -74,23 +73,23 @@ TRAIN_DATASETS = {
 
 
 TEST_DATASETS = {
-    'mnist': datasets.MNIST(
+    'mnist': lambda: datasets.MNIST(
         './datasets/mnist', train=False,
         transform=transforms.Compose(_MNIST_TEST_TRANSFORMS)
     ),
-    'mnist-color': datasets.MNIST(
+    'mnist-color': lambda: datasets.MNIST(
         './datasets/mnist', train=False, download=True,
         transform=transforms.Compose(_MNIST_COLORIZED_TEST_TRANSFORMS)
     ),
-    'cifar10': datasets.CIFAR10(
+    'cifar10': lambda: datasets.CIFAR10(
         './datasets/cifar10', train=False,
         transform=transforms.Compose(_CIFAR_TEST_TRANSFORMS)
     ),
-    'cifar100': datasets.CIFAR100(
+    'cifar100': lambda: datasets.CIFAR100(
         './datasets/cifar100', train=False,
         transform=transforms.Compose(_CIFAR_TEST_TRANSFORMS)
     ),
-    'svhn': datasets.SVHN(
+    'svhn': lambda: datasets.SVHN(
         './datasets/svhn', split='test', download=True,
         transform=transforms.Compose(_SVHN_TEST_TRANSFORMS)
     ),

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import argparse
 import numpy as np
 import torch
@@ -24,6 +25,7 @@ parser.add_argument(
     choices=['exect-replay', 'generative-replay', 'none'],
 )
 
+parser.add_argument('--generator-lambda', type=float, default=10.)
 parser.add_argument('--generator-z-size', type=int, default=100)
 parser.add_argument('--generator-c-channel-size', type=int, default=64)
 parser.add_argument('--generator-g-channel-size', type=int, default=64)
@@ -38,8 +40,8 @@ parser.add_argument('--importance-of-new-task', type=float, default=.5)
 parser.add_argument('--lr', type=float, default=1e-03)
 parser.add_argument('--weight-decay', type=float, default=1e-05)
 parser.add_argument('--batch-size', type=int, default=64)
-parser.add_argument('--test-size', type=512)
-parser.add_argument('--sample-size', type=36)
+parser.add_argument('--test-size', type=int, default=512)
+parser.add_argument('--sample-size', type=int, default=36)
 
 parser.add_argument('--image-log-interval', type=int, default=100)
 parser.add_argument('--eval-log-interval', type=int, default=50)
@@ -62,10 +64,10 @@ if __name__ == '__main__':
 
     if experiment == 'permutated-mnist':
         # generate permutations for the mnist classification tasks.
-        np.random.seed(args.random_seed)
+        np.random.seed(args.mnist_permutation_seed)
         permutations = [
             np.random.permutation(DATASET_CONFIGS['mnist']['size']**2) for
-            _ in range(args.task_number)
+            _ in range(args.mnist_permutation_number)
         ]
 
         # prepare the datasets.
@@ -124,6 +126,7 @@ if __name__ == '__main__':
         train(
             scholar, train_datasets, test_datasets,
             replay_mode=args.replay_mode,
+            generator_lambda=args.generator_lambda,
             generator_iterations=args.generator_iterations,
             generator_c_updates_per_g_update=(
                 args.generator_c_updates_per_g_update),
