@@ -110,7 +110,7 @@ class Scholar(GenerativeMixin, nn.Module):
     def sample(self, size):
         x = self.generator.sample(size)
         y = self.solver.solve(x)
-        return x, y
+        return x.data, y.data
 
     def _train_batch_trainable_with_replay(
             self, trainable, dataset, scholar=None, previous_datasets=None,
@@ -120,7 +120,7 @@ class Scholar(GenerativeMixin, nn.Module):
         # scholar and previous datasets cannot be given at the same time.
         mutex_condition_infringed = all([
             scholar is not None,
-            not previous_datasets
+            bool(previous_datasets)
         ])
         assert not mutex_condition_infringed, (
             'scholar and previous datasets cannot be given at the same time'

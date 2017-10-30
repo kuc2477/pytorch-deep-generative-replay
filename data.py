@@ -50,11 +50,8 @@ _CIFAR_TRAIN_TRANSFORMS = _CIFAR_TEST_TRANSFORMS = [
     transforms.ToTensor(),
 ]
 
-_SVHN_IMAGE_SIZE = 32
 _SVHN_TRAIN_TRANSFORMS = _SVHN_TEST_TRANSFORMS = [
     transforms.ToTensor(),
-    transforms.Scale(_SVHN_IMAGE_SIZE),
-    transforms.CenterCrop(_SVHN_IMAGE_SIZE)
 ]
 
 
@@ -111,5 +108,5 @@ DATASET_CONFIGS = {
     'mnist-color': {'size': 32, 'channels': 3, 'classes': 10},
     'cifar10': {'size': 32, 'channels': 3, 'classes': 10},
     'cifar100': {'size': 32, 'channels': 3, 'classes': 100},
-    'svhn': {'size': _SVHN_IMAGE_SIZE, 'channels': 3, 'classes': 10}
+    'svhn': {'size': 32, 'channels': 3, 'classes': 10}
 }

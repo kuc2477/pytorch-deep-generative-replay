@@ -5,6 +5,7 @@ from torch.autograd import Variable
 import gan
 import dgr
 import utils
+from const import EPSILON
 
 
 class WGAN(dgr.Generator):
@@ -111,7 +112,7 @@ class WGAN(dgr.Generator):
             create_graph=True,
             retain_graph=True,
         )[0]
-        return lamda * ((1-gradients.norm(2, dim=1))**2).mean()
+        return lamda * ((1-(gradients+EPSILON).norm(2, dim=1))**2).mean()
 
     def _is_on_cuda(self):
         return next(self.parameters()).is_cuda
@@ -151,7 +152,10 @@ class CNN(dgr.Solver):
             self.layers.append(nn.ReLU())
 
         self.layers.append(utils.LambdaModule(lambda x: x.view(x.size(0), -1)))
-        self.layers.append(nn.Linear(self.channel_size, self.classes))
+        self.layers.append(nn.Linear(
+            (image_size//(2**reducing_layers))**2 * channel_size,
+            self.classes
+        ))
 
     def forward(self, x):
         return reduce(lambda x, l: l(x), self.layers, x)

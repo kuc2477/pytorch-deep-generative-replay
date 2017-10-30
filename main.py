@@ -35,7 +35,7 @@ parser.add_argument('--solver-reducing-layers', type=int, default=3)
 parser.add_argument('--solver-channel-size', type=int, default=1024)
 
 parser.add_argument('--generator-c-updates-per-g-update', type=int, default=5)
-parser.add_argument('--generator-iterations', type=int, default=2000)
+parser.add_argument('--generator-iterations', type=int, default=1500)
 parser.add_argument('--solver-iterations', type=int, default=1000)
 parser.add_argument('--importance-of-new-task', type=float, default=.5)
 parser.add_argument('--lr', type=float, default=1e-04)

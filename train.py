@@ -64,7 +64,7 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
             eval_log_interval=eval_log_interval,
             current_task=task,
             total_tasks=len(train_datasets),
-            total_iterations=generator_iterations,
+            total_iterations=solver_iterations,
             batch_size=batch_size,
         )]
 
@@ -133,7 +133,7 @@ def _solver_training_callback(
             '<Solver> '
             'task: {task}/{tasks} | '
             'progress: [{trained}/{total}] ({percentage:.0f}%) | '
-            'loss: {ce_loss:.4} | '
+            'loss: {loss:.4} | '
             'prec: {prec:.4}'
         ).format(
             task=current_task,
