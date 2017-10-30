@@ -9,7 +9,7 @@ WIP
 
 
 ## Installation
-```
+```shell
 $ git clone https://github.com/kuc2477/pytorch-deep-generative-replay && cd pytorch-deep-generative-replay
 $ pip install -r requirements.txt
 ```
@@ -17,7 +17,7 @@ $ pip install -r requirements.txt
 ## CLI
 
 ### Usage
-```
+```shell
 $ ./main.py --help
 $ usage: PyTorch implementation of Deep Generative Replay [-h]
                                                         [--experiment {permutated-mnist,svhn-mnist,mnist-svhn}]
@@ -80,7 +80,7 @@ optional arguments:
 ```
 
 ### Run Experiments
-```
+```shell
 # Run a Visdom server and a desired experiment.
 $ python -m visdom.server &
 $ ./main.py --train \
@@ -89,7 +89,7 @@ $ ./main.py --train \
 ```
 
 ### Sample Images from Learned Scholars
-```
+```shell
 $ # Run the command below and visit the "samples" directory.
 $ ./main.py --test \
     --experiment=[ permutated-mnist | svhn-mnist | mnist-svhn ] \
