@@ -1,7 +1,8 @@
 import os
 import os.path
-import shutil
+import torchvision
 import torch
+from torch import nn
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
 
@@ -13,25 +14,14 @@ def get_data_loader(dataset, batch_size, cuda=False):
     )
 
 
-def save_checkpoint(model, model_dir, epoch, precision, best=True):
+def save_checkpoint(model, model_dir):
     path = os.path.join(model_dir, model.name)
-    path_best = os.path.join(model_dir, '{}-best'.format(model.name))
 
     # save the checkpoint.
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
-    torch.save({
-        'state': model.state_dict(),
-        'epoch': epoch,
-        'precision': precision,
-    }, path)
 
-    # override the best model if it's the best.
-    if best:
-        shutil.copy(path, path_best)
-        print('=> updated the best model of {name} at {path}'.format(
-            name=model.name, path=path_best
-        ))
+    torch.save({'state': model.state_dict()}, path)
 
     # notify that we successfully saved the checkpoint.
     print('=> saved the model {name} to {path}'.format(
@@ -39,21 +29,26 @@ def save_checkpoint(model, model_dir, epoch, precision, best=True):
     ))
 
 
-def load_checkpoint(model, model_dir, best=True):
+def load_checkpoint(model, model_dir):
     path = os.path.join(model_dir, model.name)
-    path_best = os.path.join(model_dir, '{}-best'.format(model.name))
 
     # load the checkpoint.
-    checkpoint = torch.load(path_best if best else path)
+    checkpoint = torch.load(path)
     print('=> loaded checkpoint of {name} from {path}'.format(
-        name=model.name, path=(path_best if best else path)
+        name=model.name, path=path
     ))
 
     # load parameters and return the checkpoint's epoch and precision.
     model.load_state_dict(checkpoint['state'])
-    epoch = checkpoint['epoch']
-    precision = checkpoint['precision']
-    return epoch, precision
+
+
+def test_model(model, sample_size, path):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    torchvision.utils.save_image(
+        model.sample_image(sample_size).data,
+        path + '.jpg'
+    )
+    print('=> generated sample images at "{}".'.format(path))
 
 
 def validate(model, dataset, test_size=256, cuda=False, verbose=True):
@@ -79,10 +74,32 @@ def validate(model, dataset, test_size=256, cuda=False, verbose=True):
     return precision
 
 
+def xavier_initialize(model):
+    modules = [m for n, m in model.named_modules() if 'conv' in n or 'fc' in n]
+    parameters = [p for m in modules for p in m.parameters()]
+
+    for p in parameters:
+        if p.dim() >= 2:
+            nn.init.xavier_normal(p)
+        else:
+            nn.init.constant(p, 0)
+
+
+def gaussian_intiailize(model, std=.01):
+    modules = [m for n, m in model.named_modules() if 'conv' in n or 'fc' in n]
+    parameters = [p for m in modules for p in m.parameters()]
+
+    for p in parameters:
+        if p.dim() >= 2:
+            nn.init.normal(p, std=std)
+        else:
+            nn.init.constant(p, 0)
+
+
 class LambdaModule(nn.Module):
     def __init__(self, f):
         super().__init__()
         self.f = f
 
     def forward(self, x):
-        return f(x)
+        return self.f(x)

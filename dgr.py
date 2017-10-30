@@ -67,8 +67,9 @@ class Solver(BatchTrainable):
 
 class Scholar(GenerativeMixin, nn.Module):
     """Scholar for Deep Generative Replay"""
-    def __init__(self, generator, solver):
+    def __init__(self, label, generator, solver):
         super().__init__()
+        self.label = label
         self.generator = generator
         self.solver = solver
 
@@ -130,11 +131,11 @@ class Scholar(GenerativeMixin, nn.Module):
             y = Variable(y).cuda() if self._is_on_cuda() else Variable(y)
 
             # train the model with a batch.
-            result = self.generator.train_a_batch(x, y)
+            result = trainable.train_a_batch(x, y)
 
             # fire the callbacks on each iteration.
             for callback in (training_callbacks or []):
-                callback(self, result, i)
+                callback(trainable, result, i)
 
     def _is_on_cuda(self):
         return iter(self.parameters()).next().is_cuda
