@@ -54,7 +54,7 @@ $ usage: PyTorch implementation of Deep Generative Replay [-h]
 ```shell
 # To run a visdom server and conduct full experiments
 $ python -m visdom.server &
-$ ./run_experiments
+$ ./run_full_experiments
 ```
 
 ### Run a Single Experiment
