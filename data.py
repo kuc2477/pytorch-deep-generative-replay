@@ -1,5 +1,8 @@
+import copy
+import math
 from torchvision import datasets, transforms
 from torchvision.transforms import ImageOps
+from torch.utils.data import ConcatDataset
 
 
 def _permutate_image_pixels(image, permutation):
@@ -12,13 +15,20 @@ def _permutate_image_pixels(image, permutation):
     return image.view(c, h, w)
 
 
-def get_dataset(name, train=True, permutation=None):
+def get_dataset(name, train=True, permutation=None, capacity=None):
     dataset = (TRAIN_DATASETS[name] if train else TEST_DATASETS[name])()
     dataset.transform = transforms.Compose([
         dataset.transform,
         transforms.Lambda(lambda x: _permutate_image_pixels(x, permutation)),
     ])
-    return dataset
+
+    if capacity is not None and len(dataset) < capacity:
+        return ConcatDataset([
+            copy.deepcopy(dataset) for _ in
+            range(math.ceil(capacity / len(dataset)))
+        ])
+    else:
+        return dataset
 
 
 _MNIST_TRAIN_TRANSFORMS = _MNIST_TEST_TRANSFORMS = [

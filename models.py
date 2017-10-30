@@ -55,7 +55,7 @@ class WGAN(dgr.Generator):
         g_loss.backward()
         self.generator_optimizer.step()
 
-        return {'c_loss': c_loss, 'g_loss': g_loss}
+        return {'c_loss': c_loss.data[0], 'g_loss': g_loss.data[0]}
 
     def sample(self, size):
         return self.generator(self._noise(size))

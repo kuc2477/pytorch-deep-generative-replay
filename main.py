@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import os.path
 import numpy as np
 import torch
 import utils
@@ -21,7 +22,7 @@ parser.add_argument(
 parser.add_argument('--mnist-permutation-number', type=int, default=5)
 parser.add_argument('--mnist-permutation-seed', type=int, default=0)
 parser.add_argument(
-    '--replay-mode', type=str, required=True,
+    '--replay-mode', type=str, default='generative-replay',
     choices=['exect-replay', 'generative-replay', 'none'],
 )
 
@@ -37,8 +38,10 @@ parser.add_argument('--generator-c-updates-per-g-update', type=int, default=5)
 parser.add_argument('--generator-iterations', type=int, default=2000)
 parser.add_argument('--solver-iterations', type=int, default=1000)
 parser.add_argument('--importance-of-new-task', type=float, default=.5)
-parser.add_argument('--lr', type=float, default=1e-03)
-parser.add_argument('--weight-decay', type=float, default=1e-05)
+parser.add_argument('--lr', type=float, default=1e-04)
+parser.add_argument('--beta1', type=float, default=0.5)
+parser.add_argument('--beta2', type=float, default=0.9)
+parser.add_argument('--weight-decay', type=float, default=1e-04)
 parser.add_argument('--batch-size', type=int, default=64)
 parser.add_argument('--test-size', type=int, default=512)
 parser.add_argument('--sample-size', type=int, default=36)
@@ -61,6 +64,10 @@ if __name__ == '__main__':
     # decide whether to use cuda or not.
     cuda = torch.cuda.is_available() and args.cuda
     experiment = args.experiment
+    capacity = args.batch_size * max(
+        args.generator_iterations,
+        args.solver_iterations
+    )
 
     if experiment == 'permutated-mnist':
         # generate permutations for the mnist classification tasks.
@@ -72,22 +79,26 @@ if __name__ == '__main__':
 
         # prepare the datasets.
         train_datasets = [
-            get_dataset('mnist', permutation=p) for p in
-            permutations
+            get_dataset('mnist', permutation=p, capacity=capacity)
+            for p in permutations
         ]
         test_datasets = [
-            get_dataset('mnist', train=False, permutation=p) for p in
-            permutations
+            get_dataset('mnist', train=False, permutation=p, capacity=capacity)
+            for p in permutations
         ]
 
         # decide what configuration to use.
         dataset_config = DATASET_CONFIGS['mnist']
 
     elif experiment in ('svhn-mnist', 'mnist-svhn'):
-        mnist_color_train = get_dataset('mnist-color', train=True)
-        mnist_color_test = get_dataset('mnist-color', train=False)
-        svhn_train = get_dataset('svhn', train=True)
-        svhn_test = get_dataset('svhn', train=False)
+        mnist_color_train = get_dataset(
+            'mnist-color', train=True, capacity=capacity
+        )
+        mnist_color_test = get_dataset(
+            'mnist-color', train=False, capacity=capacity
+        )
+        svhn_train = get_dataset('svhn', train=True, capacity=capacity)
+        svhn_test = get_dataset('svhn', train=False, capacity=capacity)
 
         # prepare the datasets.
         train_datasets = (
@@ -122,6 +133,14 @@ if __name__ == '__main__':
     )
     scholar = Scholar(experiment, generator=wgan, solver=cnn)
 
+    # initialize the model.
+    utils.gaussian_intiailize(scholar, std=.02)
+
+    # use cuda if needed
+    if cuda:
+        scholar.cuda()
+
+    # run the experiment.
     if args.train:
         train(
             scholar, train_datasets, test_datasets,
@@ -136,11 +155,13 @@ if __name__ == '__main__':
             test_size=args.test_size,
             sample_size=args.sample_size,
             lr=args.lr, weight_decay=args.weight_decay,
+            beta1=args.beta1, beta2=args.beta2,
             loss_log_interval=args.loss_log_interval,
             eval_log_interval=args.eval_log_interval,
             image_log_interval=args.image_log_interval,
             cuda=cuda
         )
     else:
+        path = os.path.join(args.sample_dir, '{}-sample'.format(wgan.name))
         utils.load_checkpoint(scholar, args.checkpoint_dir)
-        utils.test_model(scholar, args.sample_size, args.sample_dir)
+        utils.test_model(scholar, args.sample_size, path)

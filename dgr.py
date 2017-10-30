@@ -54,11 +54,17 @@ class Solver(BatchTrainable):
         return predictions
 
     def train_a_batch(self, x, y):
+        # run the model and backpropagate the errors
         self.optimizer.zero_grad()
-        loss = self.criterion(self.forward(x), y)
+        scores = self.forward(x)
+        loss = self.criterion(scores, y)
         loss.backward()
         self.optimizer.step()
-        return {'loss': loss}
+
+        # calculate the training precision
+        _, predicted = scores.max(1)
+        precision = (y == predicted).sum().data[0] / x.size(0)
+        return {'loss': loss.data[0], 'precision': precision}
 
     def set_optimizer(self, optimizer):
         self.optimizer = optimizer

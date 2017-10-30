@@ -3,34 +3,6 @@ from torch import optim
 from torch import nn
 
 
-def _generator_training_callback(
-        loss_log_interval,
-        image_log_interval,
-        current_task,
-        total_tasks,
-        total_iterations):
-
-    def cb(generator, progress, batch_index, result):
-        # TODO: NOT IMPLEMENTED YET
-        pass
-
-    return cb
-
-
-def _solver_training_callback(
-        loss_log_interval,
-        eval_log_interval,
-        current_task,
-        total_tasks,
-        total_iterations):
-
-    def cb(solver, progress, batch_index, result):
-        # TODO: NOT IMPLEMENTED YET
-        pass
-
-    return cb
-
-
 def train(scholar, train_datasets, test_datasets, replay_mode,
           generator_lambda=10.,
           generator_c_updates_per_g_update=5,
@@ -41,6 +13,7 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
           test_size=1024,
           sample_size=36,
           lr=1e-03, weight_decay=1e-05,
+          beta1=.5, beta2=.9,
           loss_log_interval=30,
           eval_log_interval=50,
           image_log_interval=100,
@@ -49,15 +22,15 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
     solver_criterion = nn.CrossEntropyLoss()
     solver_optimizer = optim.Adam(
         scholar.solver.parameters(),
-        lr=lr, weight_decay=weight_decay,
+        lr=lr, weight_decay=weight_decay, betas=(beta1, beta2),
     )
     generator_g_optimizer = optim.Adam(
         scholar.generator.generator.parameters(),
-        lr=lr, weight_decay=weight_decay
+        lr=lr, weight_decay=weight_decay, betas=(beta1, beta2),
     )
     generator_c_optimizer = optim.Adam(
         scholar.generator.critic.parameters(),
-        lr=lr, weight_decay=weight_decay,
+        lr=lr, weight_decay=weight_decay, betas=(beta1, beta2),
     )
 
     # set the criterion, optimizers, and training configurations for the
@@ -84,6 +57,7 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
             current_task=task,
             total_tasks=len(train_datasets),
             total_iterations=generator_iterations,
+            batch_size=batch_size,
         )]
         solver_training_callbacks = [_solver_training_callback(
             loss_log_interval=loss_log_interval,
@@ -91,6 +65,7 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
             current_task=task,
             total_tasks=len(train_datasets),
             total_iterations=generator_iterations,
+            batch_size=batch_size,
         )]
 
         # train the scholar with generative replay.
@@ -114,3 +89,60 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
             train_datasets[:task-1] if replay_mode == 'exect-replay' else
             None
         )
+
+
+def _generator_training_callback(
+        loss_log_interval,
+        image_log_interval,
+        current_task,
+        total_tasks,
+        total_iterations,
+        batch_size):
+
+    def cb(generator, progress, batch_index, result):
+        progress.set_description((
+            '<Generator> '
+            'task: {task}/{tasks} | '
+            'progress: [{trained}/{total}] ({percentage:.0f}%) | '
+            'loss => '
+            'g: {g_loss:.4} / '
+            'w: {w_dist:.4}'
+        ).format(
+            task=current_task,
+            tasks=total_tasks,
+            trained=batch_size * batch_index,
+            total=batch_size * total_iterations,
+            percentage=(100.*batch_index/total_iterations),
+            g_loss=result['g_loss'],
+            w_dist=-result['c_loss'],
+        ))
+
+    return cb
+
+
+def _solver_training_callback(
+        loss_log_interval,
+        eval_log_interval,
+        current_task,
+        total_tasks,
+        total_iterations,
+        batch_size):
+
+    def cb(solver, progress, batch_index, result):
+        progress.set_description((
+            '<Solver> '
+            'task: {task}/{tasks} | '
+            'progress: [{trained}/{total}] ({percentage:.0f}%) | '
+            'loss: {ce_loss:.4} | '
+            'prec: {prec:.4}'
+        ).format(
+            task=current_task,
+            tasks=total_tasks,
+            trained=batch_size * batch_index,
+            total=batch_size * total_iterations,
+            percentage=(100.*batch_index/total_iterations),
+            loss=result['loss'],
+            prec=result['precision'],
+        ))
+
+    return cb
