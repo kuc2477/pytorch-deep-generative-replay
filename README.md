@@ -10,8 +10,8 @@ WIP
 
 ## Installation
 ```shell
-$ git clone https://github.com/kuc2477/pytorch-deep-generative-replay && cd pytorch-deep-generative-replay
-$ pip install -r requirements.txt
+$ git clone https://github.com/kuc2477/pytorch-deep-generative-replay
+$ pip install -r pytorch-deep-generative-replay/requirements.txt
 ```
 
 ## CLI
@@ -61,21 +61,17 @@ $ ./run_full_experiments
 ```shell
 # To Run a visdom server and conduct a desired experiment
 $ python -m visdom.server &
-$ ./main.py --train \
-    --experiment=[permutated-mnist | svhn-mnist | mnist-svhn] \
-    --replay-mode=[exect-replay | generative-replay | none]
+$ ./main.py --train --experiment=[permutated-mnist | svhn-mnist | mnist-svhn] --replay-mode=[exect-replay | generative-replay | none]
 ```
 
-### Generate images from a learned Scholar
+### Generate Images from a Learned Scholar
 ```shell
 $ # Run the command below and visit the "samples" directory
-$ ./main.py --test \
-    --experiment=[permutated-mnist | svhn-mnist | mnist-svhn] \
-    --replay-mode=[exect-replay | generative-replay | none]
+$ ./main.py --test --experiment=[permutated-mnist | svhn-mnist | mnist-svhn] --replay-mode=[exect-replay | generative-replay | none]
 ```
 
 ## Notes
-- I couldn't find the supplementary materials that the authors mentioned in the paper to contain the experimental details. Thus, I arbitrarily chose a 4-convolutional-layer CNN as a default solver model. Please let me know if you find the materials.
+- I couldn't find the supplementary materials that the authors mentioned in the paper to contain the experimental details. Thus, I arbitrarily chose a 4-convolutional-layer CNN as a default solver model. Please let me know if you know where the materials are.
 
 ## Reference
 - [Continual Learning with Deep Generative Replay, arxiv:1705.08690](https://arxiv.org/abs/1705.08690)
