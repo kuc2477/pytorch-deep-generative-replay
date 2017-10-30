@@ -16,6 +16,23 @@ $ pip install -r requirements.txt
 
 ## CLI
 
+### Run Experiments
+```shell
+# Run a visdom server and conduct a desired experiment.
+$ python -m visdom.server &
+$ ./main.py --train \
+    --experiment=[ permutated-mnist | svhn-mnist | mnist-svhn ] \
+    --replay-mode=[ exect-replay | generative-replay | none ]
+```
+
+### Sample Images from Learned Scholars
+```shell
+$ # Run the command below and visit the "samples" directory.
+$ ./main.py --test \
+    --experiment=[ permutated-mnist | svhn-mnist | mnist-svhn ] \
+    --replay-mode=[ exect-replay | generative-replay | none ]
+```
+
 ### Usage
 ```shell
 $ ./main.py --help
@@ -77,23 +94,6 @@ optional arguments:
   --no-gpus
   --train
   --test
-```
-
-### Run Experiments
-```shell
-# Run a visdom server and conduct a desired experiment.
-$ python -m visdom.server &
-$ ./main.py --train \
-    --experiment=[ permutated-mnist | svhn-mnist | mnist-svhn ] \
-    --replay-mode=[ exect-replay | generative-replay | none ]
-```
-
-### Sample Images from Learned Scholars
-```shell
-$ # Run the command below and visit the "samples" directory.
-$ ./main.py --test \
-    --experiment=[ permutated-mnist | svhn-mnist | mnist-svhn ] \
-    --replay-mode=[ exect-replay | generative-replay | none ]
 ```
 
 ## Notes
