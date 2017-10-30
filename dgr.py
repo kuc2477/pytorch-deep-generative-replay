@@ -155,9 +155,10 @@ class Scholar(GenerativeMixin, nn.Module):
             dataset, batch_size, cuda=self._is_on_cuda()
         ))
         data_loader_previous = iter(utils.get_data_loader(
-            ConcatDataset(previous_datasets or []), batch_size,
+            ConcatDataset(previous_datasets), batch_size,
             cuda=self._is_on_cuda(),
-        ))
+        )) if previous_datasets else None
+
         # define a tqdm progress bar.
         progress = tqdm(range(1, iterations+1))
 
