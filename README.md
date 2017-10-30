@@ -20,33 +20,33 @@ $ pip install -r requirements.txt
 ```shell
 $ ./main.py --help
 $ usage: PyTorch implementation of Deep Generative Replay [-h]
-                                    [--experiment {permutated-mnist,svhn-mnist,mnist-svhn}]
-                                    [--mnist-permutation-number MNIST_PERMUTATION_NUMBER]
-                                    [--mnist-permutation-seed MNIST_PERMUTATION_SEED]
-                                    --replay-mode
-                                    {exect-replay,generative-replay,none}
-                                    [--generator-z-size GENERATOR_Z_SIZE]
-                                    [--generator-c-channel-size GENERATOR_C_CHANNEL_SIZE]
-                                    [--generator-g-channel-size GENERATOR_G_CHANNEL_SIZE]
-                                    [--solver-depth SOLVER_DEPTH]
-                                    [--solver-reducing-layers SOLVER_REDUCING_LAYERS]
-                                    [--solver-channel-size SOLVER_CHANNEL_SIZE]
-                                    [--generator-c-updates-per-g-update GENERATOR_C_UPDATES_PER_G_UPDATE]
-                                    [--generator-iterations GENERATOR_ITERATIONS]
-                                    [--solver-iterations SOLVER_ITERATIONS]
-                                    [--importance-of-new-task IMPORTANCE_OF_NEW_TASK]
-                                    [--lr LR]
-                                    [--weight-decay WEIGHT_DECAY]
-                                    [--batch-size BATCH_SIZE]
-                                    [--test-size TEST_SIZE]
-                                    [--sample-size SAMPLE_SIZE]
-                                    [--image-log-interval IMAGE_LOG_INTERVAL]
-                                    [--eval-log-interval EVAL_LOG_INTERVAL]
-                                    [--loss-log-interval LOSS_LOG_INTERVAL]
-                                    [--checkpoint-dir CHECKPOINT_DIR]
-                                    [--sample-dir SAMPLE_DIR]
-                                    [--no-gpus]
-                                    (--train | --test)
+                                                        [--experiment {permutated-mnist,svhn-mnist,mnist-svhn}]
+                                                        [--mnist-permutation-number MNIST_PERMUTATION_NUMBER]
+                                                        [--mnist-permutation-seed MNIST_PERMUTATION_SEED]
+                                                        --replay-mode
+                                                        {exect-replay,generative-replay,none}
+                                                        [--generator-z-size GENERATOR_Z_SIZE]
+                                                        [--generator-c-channel-size GENERATOR_C_CHANNEL_SIZE]
+                                                        [--generator-g-channel-size GENERATOR_G_CHANNEL_SIZE]
+                                                        [--solver-depth SOLVER_DEPTH]
+                                                        [--solver-reducing-layers SOLVER_REDUCING_LAYERS]
+                                                        [--solver-channel-size SOLVER_CHANNEL_SIZE]
+                                                        [--generator-c-updates-per-g-update GENERATOR_C_UPDATES_PER_G_UPDATE]
+                                                        [--generator-iterations GENERATOR_ITERATIONS]
+                                                        [--solver-iterations SOLVER_ITERATIONS]
+                                                        [--importance-of-new-task IMPORTANCE_OF_NEW_TASK]
+                                                        [--lr LR]
+                                                        [--weight-decay WEIGHT_DECAY]
+                                                        [--batch-size BATCH_SIZE]
+                                                        [--test-size TEST_SIZE]
+                                                        [--sample-size SAMPLE_SIZE]
+                                                        [--image-log-interval IMAGE_LOG_INTERVAL]
+                                                        [--eval-log-interval EVAL_LOG_INTERVAL]
+                                                        [--loss-log-interval LOSS_LOG_INTERVAL]
+                                                        [--checkpoint-dir CHECKPOINT_DIR]
+                                                        [--sample-dir SAMPLE_DIR]
+                                                        [--no-gpus]
+                                                        (--train | --test)
 
 ```
 
