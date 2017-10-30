@@ -19,6 +19,10 @@ parser.add_argument(
 )
 parser.add_argument('--mnist-permutation-number', type=int, default=5)
 parser.add_argument('--mnist-permutation-seed', type=int, default=0)
+parser.add_argument(
+    '--replay-mode', type=str, required=True,
+    choices=['exect-replay', 'generative-replay', 'none'],
+)
 
 parser.add_argument('--generator-z-size', type=int, default=100)
 parser.add_argument('--generator-c-channel-size', type=int, default=64)
@@ -27,8 +31,10 @@ parser.add_argument('--solver-depth', type=int, default=5)
 parser.add_argument('--solver-reducing-layers', type=int, default=3)
 parser.add_argument('--solver-channel-size', type=int, default=1024)
 
+parser.add_argument('--generator-c-updates-per-g-update', type=int, default=5)
 parser.add_argument('--generator-iterations', type=int, default=2000)
 parser.add_argument('--solver-iterations', type=int, default=1000)
+parser.add_argument('--importance-of-new-task', type=float, default=.5)
 parser.add_argument('--lr', type=float, default=1e-03)
 parser.add_argument('--weight-decay', type=float, default=1e-05)
 parser.add_argument('--batch-size', type=int, default=64)
@@ -39,6 +45,7 @@ parser.add_argument('--image-log-interval', type=int, default=100)
 parser.add_argument('--eval-log-interval', type=int, default=50)
 parser.add_argument('--loss-log-interval', type=int, default=30)
 parser.add_argument('--checkpoint-dir', type=str, default='./checkpoints')
+parser.add_argument('--sample-dir', type=str, default='./samples')
 parser.add_argument('--no-gpus', action='store_false', dest='cuda')
 
 main_command = parser.add_mutually_exclusive_group(required=True)
@@ -116,8 +123,12 @@ if __name__ == '__main__':
     if args.train:
         train(
             scholar, train_datasets, test_datasets,
+            replay_mode=args.replay_mode,
             generator_iterations=args.generator_iterations,
+            generator_c_updates_per_g_update=(
+                args.generator_c_updates_per_g_update),
             solver_iterations=args.solver_iterations,
+            importance_of_new_task=args.importance_of_new_task,
             batch_size=args.batch_size,
             test_size=args.test_size,
             sample_size=args.sample_size,
@@ -129,4 +140,4 @@ if __name__ == '__main__':
         )
     else:
         utils.load_checkpoint(scholar, args.checkpoint_dir)
-        utils.test_model(scholar, args.sample_size)
+        utils.test_model(scholar, args.sample_size, args.sample_dir)

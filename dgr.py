@@ -1,6 +1,8 @@
 import abc
 import utils
 import random
+from random import choice
+from tqdm import tqdm
 import torch
 from torch import nn
 from torch.autograd import Variable
@@ -73,12 +75,13 @@ class Scholar(GenerativeMixin, nn.Module):
         self.generator = generator
         self.solver = solver
 
-    def train_with_replay(self, dataset, scholar=None,
-                          importance_of_new_task=.5, batch_size=32,
-                          generator_iteration=2000,
-                          generator_training_callbacks=None,
-                          solver_iteration=1000,
-                          solver_training_callbacks=None):
+    def train_with_replay(
+            self, dataset, scholar=None, previous_datasets=None,
+            importance_of_new_task=.5, batch_size=32,
+            generator_iteration=2000,
+            generator_training_callbacks=None,
+            solver_iteration=1000,
+            solver_training_callbacks=None):
 
         # train the generator of the scholar.
         self._train_batch_trainable_with_replay(
@@ -104,29 +107,48 @@ class Scholar(GenerativeMixin, nn.Module):
         return x, y
 
     def _train_batch_trainable_with_replay(
-            self, trainable, dataset, scholar=None,
+            self, trainable, dataset, scholar=None, previous_datasets=None,
             importance_of_new_task=.5, batch_size=32, iteration=1000,
             training_callbacks=None):
 
-        # create a data loader for the dataset.
+        # scholar and previous datasets cannot be given at the same time.
+        mutex_condition_infringed = not all([
+            scholar is not None,
+            not previous_datasets
+        ])
+        assert not mutex_condition_infringed, (
+            'scholar and previous datasets cannot be given at the same time'
+        )
+
+        # create data loaders.
         data_loader = iter(utils.get_data_loader(
             dataset, batch_size, cuda=self._is_on_cuda()
         ))
+        previous_datasets = previous_datasets or []
+        previous_loaders = [
+            iter(utils.get_data_loader(d, batch_size, cuda=self._is_on_cuda()))
+            for d in previous_datasets
+        ]
+        # define a tqdm progress bar.
+        progress = tqdm(range(1, iteration+1))
 
-        for i in range(iteration):
+        for batch_index in progress:
             # decide from where to sample the training data.
-            sample_from_scholar = (
+            from_scholar = (
                 random.random() > importance_of_new_task and
                 scholar is not None
+            )
+            from_previous_datasets = (
+                random.random() > importance_of_new_task and
+                previous_datasets
             )
 
             # sample the training data.
             x, y = (
-                scholar.sample(batch_size) if sample_from_scholar else
+                scholar.sample(batch_size) if from_scholar else
+                next(choice(previous_loaders)) if from_previous_datasets else
                 next(data_loader)
             )
-
-            # wrap the data with variables.
             x = Variable(x).cuda() if self._is_on_cuda() else Variable(x)
             y = Variable(y).cuda() if self._is_on_cuda() else Variable(y)
 
@@ -135,7 +157,7 @@ class Scholar(GenerativeMixin, nn.Module):
 
             # fire the callbacks on each iteration.
             for callback in (training_callbacks or []):
-                callback(trainable, result, i)
+                callback(trainable, progress, batch_index, result)
 
     def _is_on_cuda(self):
         return iter(self.parameters()).next().is_cuda
