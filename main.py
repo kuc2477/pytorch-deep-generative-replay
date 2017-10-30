@@ -37,7 +37,7 @@ parser.add_argument('--solver-channel-size', type=int, default=1024)
 parser.add_argument('--generator-c-updates-per-g-update', type=int, default=5)
 parser.add_argument('--generator-iterations', type=int, default=1500)
 parser.add_argument('--solver-iterations', type=int, default=1000)
-parser.add_argument('--importance-of-new-task', type=float, default=.5)
+parser.add_argument('--importance-of-new-task', type=float, default=.4)
 parser.add_argument('--lr', type=float, default=1e-04)
 parser.add_argument('--beta1', type=float, default=0.5)
 parser.add_argument('--beta2', type=float, default=0.9)
@@ -131,9 +131,10 @@ if __name__ == '__main__':
         c_channel_size=args.generator_c_channel_size,
         g_channel_size=args.generator_g_channel_size,
     )
-    label = '{experiment}-{replay_mode}'.format(
+    label = '{experiment}-{replay_mode}-r{importance_of_new_task}'.format(
         experiment=experiment,
         replay_mode=args.replay_mode,
+        importance_of_new_task=args.importance_of_new_task,
     )
     scholar = Scholar(label, generator=wgan, solver=cnn)
 

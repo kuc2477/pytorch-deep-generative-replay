@@ -103,8 +103,9 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
 
     # save the model after the experiment.
     print()
-    print()
     utils.save_checkpoint(scholar, checkpoint_dir)
+    print()
+    print()
 
 
 def _generator_training_callback(
