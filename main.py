@@ -159,6 +159,7 @@ if __name__ == '__main__':
             loss_log_interval=args.loss_log_interval,
             eval_log_interval=args.eval_log_interval,
             image_log_interval=args.image_log_interval,
+            checkpoint_dir=args.checkpoint_dir,
             cuda=cuda
         )
     else:
