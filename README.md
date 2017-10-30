@@ -50,14 +50,14 @@ $ usage: PyTorch implementation of Deep Generative Replay [-h]
 
 ```
 
-### To run Full Experiments
+### Run Full Experiments
 ```shell
 # To run a visdom server and conduct full experiments
 $ python -m visdom.server &
 $ ./run_experiments
 ```
 
-### To run a Single Experiment
+### Run a Single Experiment
 ```shell
 # To Run a visdom server and conduct a desired experiment
 $ python -m visdom.server &
@@ -66,7 +66,7 @@ $ ./main.py --train \
     --replay-mode=[exect-replay | generative-replay | none]
 ```
 
-### To sample images from a learned Scholar
+### Generate images from a learned Scholar
 ```shell
 $ # Run the command below and visit the "samples" directory
 $ ./main.py --test \
@@ -75,7 +75,7 @@ $ ./main.py --test \
 ```
 
 ## Notes
-- I couldn't find the supplementary materials which the authors mentioned to contain the experimental details. Thus, I arbitrarily chosed a 4-convolutional-layer CNN as a default solver model. Please let me know where I can find the supplementary materials if you know it.
+- I couldn't find the supplementary materials that the authors mentioned in the paper to contain the experimental details. Thus, I arbitrarily chosed a 4-convolutional-layer CNN as a default solver model. Please let me know if you find the materials.
 
 ## Reference
 - [Continual Learning with Deep Generative Replay, arxiv:1705.08690](https://arxiv.org/abs/1705.08690)
