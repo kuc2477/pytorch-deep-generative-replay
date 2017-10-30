@@ -1,7 +1,5 @@
 import abc
 import utils
-import random
-from random import choice
 from tqdm import tqdm
 import torch
 from torch import nn
@@ -20,12 +18,12 @@ class GenerativeMixin(object):
 
 class BatchTrainable(nn.Module, metaclass=abc.ABCMeta):
     """
-    Abstract base class which defines a generative-replay based training
+    Abstract base class which defines a generative-replay-based training
     interface for a model.
 
     """
     @abc.abstractmethod
-    def train_a_batch(self, x, y):
+    def train_a_batch(self, x, y, x_=None, y_=None, importance_of_new_task=.5):
         raise NotImplementedError
 
 
@@ -53,17 +51,38 @@ class Solver(BatchTrainable):
         _, predictions = torch.max(scores, 1)
         return predictions
 
-    def train_a_batch(self, x, y):
-        # run the model and backpropagate the errors
+    def train_a_batch(self, x, y, x_=None, y_=None, importance_of_new_task=.5):
+        assert x_ is None or x.size() == x_.size()
+        assert y_ is None or y.size() == y_.size()
+        # clear gradients.
+        batch_size = x.size(0)
         self.optimizer.zero_grad()
-        scores = self.forward(x)
-        loss = self.criterion(scores, y)
+
+        # run the model on the real data.
+        real_scores = self.forward(x)
+        real_loss = self.criterion(real_scores, y)
+        _, real_predicted = real_scores.max(1)
+        real_prec = (y == real_predicted).sum().data[0] / batch_size
+
+        # run the model on the replayed data.
+        if x_ is not None and y_ is not None:
+            replay_scores = self.forward(x_)
+            replay_loss = self.criterion(replay_scores, y_)
+            _, replay_predicted = replay_scores.max(1)
+            replay_prec = (y_ == replay_predicted).sum().data[0] / batch_size
+
+            # calculate joint loss of real data and replayed data.
+            loss = (
+                importance_of_new_task * real_loss +
+                (1-importance_of_new_task) * replay_loss
+            )
+            precision = (real_prec + replay_prec) / 2
+        else:
+            loss = real_loss
+            precision = real_prec
+
         loss.backward()
         self.optimizer.step()
-
-        # calculate the training precision
-        _, predicted = scores.max(1)
-        precision = (y == predicted).sum().data[0] / x.size(0)
         return {'loss': loss.data[0], 'precision': precision}
 
     def set_optimizer(self, optimizer):
@@ -107,6 +126,10 @@ class Scholar(GenerativeMixin, nn.Module):
             training_callbacks=solver_training_callbacks,
         )
 
+    @property
+    def name(self):
+        return self.label
+
     def sample(self, size):
         x = self.generator.sample(size)
         y = self.solver.solve(x)
@@ -140,26 +163,29 @@ class Scholar(GenerativeMixin, nn.Module):
 
         for batch_index in progress:
             # decide from where to sample the training data.
-            from_scholar = (
-                random.random() > importance_of_new_task and
-                scholar is not None
-            )
-            from_previous_datasets = (
-                random.random() > importance_of_new_task and
-                previous_datasets
-            )
+            from_scholar = scholar is not None
+            from_previous_datasets = bool(previous_datasets)
+            cuda = self._is_on_cuda()
 
-            # sample the training data.
-            x, y = (
-                scholar.sample(batch_size) if from_scholar else
-                next(choice(previous_loaders)) if from_previous_datasets else
-                next(data_loader)
+            # sample the real training data.
+            x, y = next(data_loader)
+            x = Variable(x).cuda() if cuda else Variable(x)
+            y = Variable(y).cuda() if cuda else Variable(y)
+
+            # sample the replayed training data.
+            x_, y_ = (
+                next(previous_loaders) if from_previous_datasets else
+                scholar.sample(batch_size) if from_scholar else (None, None)
             )
-            x = Variable(x).cuda() if self._is_on_cuda() else Variable(x)
-            y = Variable(y).cuda() if self._is_on_cuda() else Variable(y)
+            if x_ is not None and y_ is not None:
+                x_ = Variable(x_).cuda() if cuda else Variable(x_)
+                y_ = Variable(y_).cuda() if cuda else Variable(y_)
 
             # train the model with a batch.
-            result = trainable.train_a_batch(x, y)
+            result = trainable.train_a_batch(
+                x, y, x_=x_, y_=y_,
+                importance_of_new_task=importance_of_new_task
+            )
 
             # fire the callbacks on each iteration.
             for callback in (training_callbacks or []):

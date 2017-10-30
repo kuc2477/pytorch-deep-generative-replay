@@ -27,20 +27,20 @@ def visualize_image(tensor, name, label=None, env='main', w=250, h=250,
         )
 
 
-def visualize_images(tensor, name, label=None, env='main', w=250, h=250,
+def visualize_images(tensor, name, label=None, env='main', w=400, h=400,
                      update_window_without_label=False):
     tensor = tensor.cpu() if isinstance(tensor, CUDATensor) else tensor
     title = name + ('-{}'.format(label) if label is not None else '')
 
     _WINDOW_CASH[title] = _vis(env).images(
-        tensor.numpy(), win=_WINDOW_CASH.get(title),
+        tensor.numpy(), win=_WINDOW_CASH.get(title), nrow=6,
         opts=dict(title=title, width=w, height=h)
     )
 
     # This is useful when you want to maintain the most recent images.
     if update_window_without_label:
         _WINDOW_CASH[name] = _vis(env).images(
-            tensor.numpy(), win=_WINDOW_CASH.get(name),
+            tensor.numpy(), win=_WINDOW_CASH.get(name), nrow=6,
             opts=dict(title=name, width=w, height=h)
         )
 

@@ -39,13 +39,39 @@ class WGAN(dgr.Generator):
         self.critic_updates_per_generator_update = None
         self.lamda = None
 
-    def train_a_batch(self, x, y):
+    def train_a_batch(self, x, y, x_=None, y_=None, importance_of_new_task=.5):
+        assert x_ is None or x.size() == x_.size()
+        assert y_ is None or y.size() == y_.size()
+
         # run the critic and backpropagate the errors.
         for _ in range(self.critic_updates_per_generator_update):
             self.critic_optimizer.zero_grad()
             z = self._noise(x.size(0))
-            c_loss, g = self._c_loss(x, z, return_g=True)
-            c_loss_gp = c_loss + self._gradient_penalty(x, g, self.lamda)
+
+            # run the critic on the real data.
+            c_loss_real, g_real = self._c_loss(x, z, return_g=True)
+            c_loss_real_gp = (
+                c_loss_real + self._gradient_penalty(x, g_real, self.lamda)
+            )
+
+            # run the critic on the replayed data.
+            if x_ is not None and y_ is not None:
+                c_loss_replay, g_replay = self._c_loss(x_, z, return_g=True)
+                c_loss_replay_gp = (c_loss_replay + self._gradient_penalty(
+                    x_, g_replay, self.lamda
+                ))
+                c_loss = (
+                    importance_of_new_task * c_loss_real +
+                    (1-importance_of_new_task) * c_loss_replay
+                )
+                c_loss_gp = (
+                    importance_of_new_task * c_loss_real_gp +
+                    (1-importance_of_new_task) * c_loss_replay_gp
+                )
+            else:
+                c_loss = c_loss_real
+                c_loss_gp = c_loss_real_gp
+
             c_loss_gp.backward()
             self.critic_optimizer.step()
 

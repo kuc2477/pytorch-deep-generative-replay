@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+./main.py --train --experiment=permutated-mnist --replay-mode=exact-replay
+./main.py --train --experiment=permutated-mnist --replay-mode=generative-replay
+./main.py --train --experiment=permutated-mnist --replay-mode=none
+
+./main.py --train --experiment=mnist-svhn --replay-mode=exact-replay
+./main.py --train --experiment=mnist-svhn --replay-mode=generative-replay
+./main.py --train --experiment=mnist-svhn --replay-mode=none
+
+./main.py --train --experiment=svhn-mnist --replay-mode=exact-replay
+./main.py --train --experiment=svhn-mnist --replay-mode=generative-replay
+./main.py --train --experiment=svhn-mnist --replay-mode=none

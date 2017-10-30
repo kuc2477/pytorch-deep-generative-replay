@@ -50,18 +50,25 @@ $ usage: PyTorch implementation of Deep Generative Replay [-h]
 
 ```
 
-### Run Experiments
+### To run Full Experiments
 ```shell
-# Run a visdom server and conduct a desired experiment.
+# To run a visdom server and conduct full experiments
+$ python -m visdom.server &
+$ ./run_experiments
+```
+
+### To run a Single Experiment
+```shell
+# To Run a visdom server and conduct a desired experiment
 $ python -m visdom.server &
 $ ./main.py --train \
     --experiment=[permutated-mnist | svhn-mnist | mnist-svhn] \
     --replay-mode=[exect-replay | generative-replay | none]
 ```
 
-### Sample Images from Learned Scholars
+### To sample images from a learned Scholar
 ```shell
-$ # Run the command below and visit the "samples" directory.
+$ # Run the command below and visit the "samples" directory
 $ ./main.py --test \
     --experiment=[permutated-mnist | svhn-mnist | mnist-svhn] \
     --replay-mode=[exect-replay | generative-replay | none]

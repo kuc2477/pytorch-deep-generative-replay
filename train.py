@@ -63,8 +63,7 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
             batch_size=batch_size,
             sample_size=sample_size,
             replay_mode=replay_mode,
-            env=('{experiment}_{replay_mode}'
-                 .format(scholar.label, replay_mode))
+            env=scholar.name,
         )]
         solver_training_callbacks = [_solver_training_callback(
             loss_log_interval=loss_log_interval,
@@ -76,8 +75,8 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
             test_size=test_size,
             test_datasets=test_datasets,
             replay_mode=replay_mode,
-            env=('{experiment}_{replay_mode}'
-                 .format(scholar.label, replay_mode))
+            cuda=cuda,
+            env=scholar.name,
         )]
 
         # train the scholar with generative replay.
@@ -98,7 +97,7 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
             None
         )
         previous_datasets = (
-            train_datasets[:task-1] if replay_mode == 'exect-replay' else
+            train_datasets[:task-1] if replay_mode == 'exact-replay' else
             None
         )
 
@@ -120,7 +119,7 @@ def _generator_training_callback(
         env):
 
     def cb(generator, progress, batch_index, result):
-        iteration = (current_task-1)*total_iterations + batch_index,
+        iteration = (current_task-1)*total_iterations + batch_index
         progress.set_description((
             '<Training Generator> '
             'task: {task}/{tasks} | '
@@ -172,9 +171,9 @@ def _solver_training_callback(
         env):
 
     def cb(solver, progress, batch_index, result):
-        iteration = (current_task-1)*total_iterations + batch_index,
+        iteration = (current_task-1)*total_iterations + batch_index
         progress.set_description((
-            '<Training Solver> '
+            '<Training Solver>    '
             'task: {task}/{tasks} | '
             'progress: [{trained}/{total}] ({percentage:.0f}%) | '
             'loss: {loss:.4} | '

@@ -23,7 +23,7 @@ parser.add_argument('--mnist-permutation-number', type=int, default=5)
 parser.add_argument('--mnist-permutation-seed', type=int, default=0)
 parser.add_argument(
     '--replay-mode', type=str, default='generative-replay',
-    choices=['exect-replay', 'generative-replay', 'none'],
+    choices=['exact-replay', 'generative-replay', 'none'],
 )
 
 parser.add_argument('--generator-lambda', type=float, default=10.)
@@ -41,8 +41,8 @@ parser.add_argument('--importance-of-new-task', type=float, default=.5)
 parser.add_argument('--lr', type=float, default=1e-04)
 parser.add_argument('--beta1', type=float, default=0.5)
 parser.add_argument('--beta2', type=float, default=0.9)
-parser.add_argument('--weight-decay', type=float, default=1e-04)
-parser.add_argument('--batch-size', type=int, default=64)
+parser.add_argument('--weight-decay', type=float, default=1e-05)
+parser.add_argument('--batch-size', type=int, default=32)
 parser.add_argument('--test-size', type=int, default=512)
 parser.add_argument('--sample-size', type=int, default=36)
 
@@ -131,7 +131,11 @@ if __name__ == '__main__':
         c_channel_size=args.generator_c_channel_size,
         g_channel_size=args.generator_g_channel_size,
     )
-    scholar = Scholar(experiment, generator=wgan, solver=cnn)
+    label = '{experiment}-{replay_mode}'.format(
+        experiment=experiment,
+        replay_mode=args.replay_mode,
+    )
+    scholar = Scholar(label, generator=wgan, solver=cnn)
 
     # initialize the model.
     utils.gaussian_intiailize(scholar, std=.02)
