@@ -37,13 +37,13 @@ parser.add_argument('--solver-channel-size', type=int, default=1024)
 parser.add_argument('--generator-c-updates-per-g-update', type=int, default=5)
 parser.add_argument('--generator-iterations', type=int, default=1500)
 parser.add_argument('--solver-iterations', type=int, default=1000)
-parser.add_argument('--importance-of-new-task', type=float, default=.4)
+parser.add_argument('--importance-of-new-task', type=float, default=.3)
 parser.add_argument('--lr', type=float, default=1e-04)
 parser.add_argument('--beta1', type=float, default=0.5)
 parser.add_argument('--beta2', type=float, default=0.9)
 parser.add_argument('--weight-decay', type=float, default=1e-05)
 parser.add_argument('--batch-size', type=int, default=32)
-parser.add_argument('--test-size', type=int, default=512)
+parser.add_argument('--test-size', type=int, default=1024)
 parser.add_argument('--sample-size', type=int, default=36)
 
 parser.add_argument('--image-log-interval', type=int, default=100)
@@ -106,8 +106,8 @@ if __name__ == '__main__':
             [svhn_train, mnist_color_train]
         )
         test_datasets = (
-            [svhn_test, mnist_color_test] if experiment == 'mnist-svhn' else
-            [mnist_color_test, svhn_test]
+            [mnist_color_test, svhn_test] if experiment == 'mnist-svhn' else
+            [svhn_test, mnist_color_test]
         )
 
         # decide what configuration to use.
