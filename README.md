@@ -81,7 +81,7 @@ optional arguments:
 
 ### Run Experiments
 ```shell
-# Run a Visdom server and a desired experiment.
+# Run a visdom server and conduct a desired experiment.
 $ python -m visdom.server &
 $ ./main.py --train \
     --experiment=[ permutated-mnist | svhn-mnist | mnist-svhn ] \
@@ -97,7 +97,7 @@ $ ./main.py --test \
 ```
 
 ## Notes
-- I couldn't find the supplementary materials which the authors mentioned to contain the experimental details. Thus, I arbitrarily chosed a 4-convolutional-layer CNN as a default solver model. Please let me know where I can find the supplementary materials if you know it. 
+- I couldn't find the supplementary materials which the authors mentioned to contain the experimental details. Thus, I arbitrarily chosed a 4-convolutional-layer CNN as a default solver model. Please let me know where I can find the supplementary materials if you know it.
 
 ## Reference
 - [Continual Learning with Deep Generative Replay, arxiv:1705.08690](https://arxiv.org/abs/1705.08690)
