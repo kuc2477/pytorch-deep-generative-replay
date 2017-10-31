@@ -74,24 +74,24 @@ $ usage: PyTorch implementation of Deep Generative Replay [-h]
 
 ```
 
-### Run Full Experiments
+### To Run Full Experiments
 ```shell
-# To run a visdom server and conduct full experiments
+# Run a visdom server and conduct full experiments
 $ python -m visdom.server &
 $ ./run_full_experiments
 ```
 
-### Run a Single Experiment
+### To Run a Single Experiment
 ```shell
-# To Run a visdom server and conduct a desired experiment
+# Run a visdom server and conduct a desired experiment
 $ python -m visdom.server &
-$ ./main.py --train --experiment=[permutated-mnist | svhn-mnist | mnist-svhn] --replay-mode=[exact-replay | generative-replay | none]
+$ ./main.py --train --experiment=[permutated-mnist|svhn-mnist|mnist-svhn] --replay-mode=[exact-replay|generative-replay|none]
 ```
 
-### Generate Images from the learned Scholar
+### To Generate Images from the learned Scholar
 ```shell
 $ # Run the command below and visit the "samples" directory
-$ ./main.py --test --experiment=[permutated-mnist | svhn-mnist | mnist-svhn] --replay-mode=[exact-replay | generative-replay | none]
+$ ./main.py --test --experiment=[permutated-mnist|svhn-mnist|mnist-svhn] --replay-mode=[exact-replay|generative-replay|none]
 ```
 
 ## Note
