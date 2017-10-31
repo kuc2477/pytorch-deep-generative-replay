@@ -12,15 +12,23 @@ Test precisions **without any replay** (*left*), **with exact replay** (*middle*
 
 <img width="250" style="padding: 5px;" src="./arts/permutated-mnist-none.png" /> <img width="250" style="padding: 5px;" src="./arts/permutated-mnist-exact-replay.png" /> <img width="250" style="padding: 5px;" src="./arts/permutated-mnist-generative-replay.png" />
 
+### Continual Learning on MNIST-SVHN
+Training scholar's generator **without any replay** (*left*) and **with Deep Generative Replay** (*right*).
+
+<img width="250" style="padding: 5px;" src="./arts/mnist-svhn-none.gif" /> <img width="250" style="padding: 5px;" src="./arts/mnist-svhn-generative-replay.gif" /> 
+
+Generated samples from learned scholar **without any replay** (*left*) and **with Deep Generative Replay** (*right).
+
+<img width="250" style="padding: 5px;" src="./arts/mnist-svhn-none-sample.jpg" /> <img width="250" style="padding: 5px;" src="./arts/mnist-svhn-generative-replay-sample.jpg" /> 
+
+Test precisions **without any replay** (*left*), **with exact replay** (*middle*), and **with Deep Generative Replay** (*right*).
+
+<img width="250" style="padding: 5px;" src="./arts/mnist-svhn-none.png" /> <img width="250" style="padding: 5px;" src="./arts/mnist-svhn-exact-replay.png" /> <img width="250" style="padding: 5px;" src="./arts/mnist-svhn-generative-replay.png" />
+
 ### Continual Learning on SVHN-MNIST
 Test precisions **without any replay** (*left*), **with exact replay** (*middle*), and **with Deep Generative Replay** (*right*).
 
 <img width="250" style="padding: 5px;" src="./arts/svhn-mnist-none.png" /> <img width="250" style="padding: 5px;" src="./arts/svhn-mnist-exact-replay.png" /> <img width="250" style="padding: 5px;" src="./arts/svhn-mnist-generative-replay.png" />
-
-### Continual Learning on MNIST-SVHN
-Test precisions **without any replay** (*left*), **with exact replay** (*middle*), and **with Deep Generative Replay** (*right*).
-
-<img width="250" style="padding: 5px;" src="./arts/mnist-svhn-none.png" /> <img width="250" style="padding: 5px;" src="./arts/mnist-svhn-exact-replay.png" /> <img width="250" style="padding: 5px;" src="./arts/mnist-svhn-generative-replay.png" />
 
 
 ## Installation
@@ -86,7 +94,7 @@ $ ./main.py --test --experiment=[permutated-mnist | svhn-mnist | mnist-svhn] --r
 ```
 
 ## Note
-- I failed to find the supplementary materials that the authors mentioned in the paper to contain the experimental details. Thus, I arbitrarily chose a 4-convolutional-layer CNN as a Solver of the Scholar in this project. If you know where I can find the additional materials, please let me know through the project's Github issue.
+- I failed to find the supplementary materials that the authors mentioned in the paper to contain the experimental details. Thus, I arbitrarily chose a 4-convolutional-layer CNN as a solver in this project. If you know where I can find the additional materials, please let me know through the project's Github issue.
 
 ## Reference
 - [Continual Learning with Deep Generative Replay, arxiv:1705.08690](https://arxiv.org/abs/1705.08690)
