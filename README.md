@@ -1,11 +1,26 @@
 # pytorch-deep-generative-replay
+
 PyTorch implementation of [Continual Learning with Deep Generative Replay, NIPS 2017](https://arxiv.org/abs/1705.08690)
 
 ![model](./arts/model.png)
 
 
 ## Results
-WIP
+
+### Continual Learning on Permutated MNISTs
+Test precisions **without any replay** (*left*), **with exact replay** (*middle*), and **with Deep Generative Replay** (*right*).
+
+<img width="250" style="padding: 5px;" src="./arts/permutated-mnist-none.png" /> <img width="250" style="padding: 5px;" src="./arts/permutated-mnist-exact-replay.png" /> <img width="250" style="padding: 5px;" src="./arts/permutated-mnist-generative-replay.png" />
+
+### Continual Learning on SVHN-MNIST
+Test precisions **without any replay** (*left*), **with exact replay** (*middle*), and **with Deep Generative Replay** (*right*).
+
+<img width="250" style="padding: 5px;" src="./arts/svhn-mnist-none.png" /> <img width="250" style="padding: 5px;" src="./arts/svhn-mnist-exact-replay.png" /> <img width="250" style="padding: 5px;" src="./arts/svhn-mnist-generative-replay.png" />
+
+### Continual Learning on MNIST-SVHN
+Test precisions **without any replay** (*left*), **with exact replay** (*middle*), and **with Deep Generative Replay** (*right*).
+
+<img width="250" style="padding: 5px;" src="./arts/mnist-svhn-none.png" /> <img width="250" style="padding: 5px;" src="./arts/mnist-svhn-exact-replay.png" /> <img width="250" style="padding: 5px;" src="./arts/mnist-svhn-generative-replay.png" />
 
 
 ## Installation
@@ -14,7 +29,7 @@ $ git clone https://github.com/kuc2477/pytorch-deep-generative-replay
 $ pip install -r pytorch-deep-generative-replay/requirements.txt
 ```
 
-## CLI
+## Commands
 
 ### Usage
 ```shell
@@ -70,8 +85,8 @@ $ # Run the command below and visit the "samples" directory
 $ ./main.py --test --experiment=[permutated-mnist | svhn-mnist | mnist-svhn] --replay-mode=[exact-replay | generative-replay | none]
 ```
 
-## Notes
-- I couldn't find the supplementary materials that the authors mentioned in the paper to contain the experimental details. Thus, I arbitrarily chose a 4-convolutional-layer CNN as a default solver model. Please let me know if you know where I can find the materials.
+## Note
+- I failed to find the supplementary materials that the authors mentioned in the paper to contain the experimental details, and thus, I arbitrarily chose a 4-convolutional-layer CNN as a solver model. Please let me know if you know where I can find the additional materials mentioned in the paper.
 
 ## Reference
 - [Continual Learning with Deep Generative Replay, arxiv:1705.08690](https://arxiv.org/abs/1705.08690)
