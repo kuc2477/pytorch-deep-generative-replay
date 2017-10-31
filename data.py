@@ -15,6 +15,10 @@ def _permutate_image_pixels(image, permutation):
     return image.view(c, h, w)
 
 
+def _colorize_grayscale_image(image):
+    return ImageOps.colorize(image, (0, 0, 0), (255, 255, 255))
+
+
 def get_dataset(name, train=True, permutation=None, capacity=None):
     dataset = (TRAIN_DATASETS[name] if train else TEST_DATASETS[name])()
     dataset.transform = transforms.Compose([
@@ -41,7 +45,7 @@ _MNIST_TRAIN_TRANSFORMS = _MNIST_TEST_TRANSFORMS = [
 _MNIST_COLORIZED_TRAIN_TRANSFORMS = _MNIST_COLORIZED_TEST_TRANSFORMS = [
     transforms.ToTensor(),
     transforms.ToPILImage(),
-    transforms.Lambda(lambda x: ImageOps.colorize(x, (0, 0, 0), (1, 1, 1))),
+    transforms.Lambda(lambda x: _colorize_grayscale_image(x)),
     transforms.Pad(2),
     transforms.ToTensor(),
 ]
@@ -53,10 +57,9 @@ _CIFAR_TRAIN_TRANSFORMS = _CIFAR_TEST_TRANSFORMS = [
 _SVHN_TRAIN_TRANSFORMS = _SVHN_TEST_TRANSFORMS = [
     transforms.ToTensor(),
 ]
-
-
-def _SVHN_COLLATE_FN(batch):
-    __import__('pdb').set_trace()
+_SVHN_TARGET_TRANSFORMS = [
+    transforms.Lambda(lambda y: y % 10)
+]
 
 
 TRAIN_DATASETS = {
@@ -78,7 +81,8 @@ TRAIN_DATASETS = {
     ),
     'svhn': lambda: datasets.SVHN(
         './datasets/svhn', split='train', download=True,
-        transform=transforms.Compose(_SVHN_TRAIN_TRANSFORMS)
+        transform=transforms.Compose(_SVHN_TRAIN_TRANSFORMS),
+        target_transform=transforms.Compose(_SVHN_TARGET_TRANSFORMS),
     ),
 }
 
@@ -102,7 +106,8 @@ TEST_DATASETS = {
     ),
     'svhn': lambda: datasets.SVHN(
         './datasets/svhn', split='test', download=True,
-        transform=transforms.Compose(_SVHN_TEST_TRANSFORMS)
+        transform=transforms.Compose(_SVHN_TEST_TRANSFORMS),
+        target_transform=transforms.Compose(_SVHN_TARGET_TRANSFORMS),
     ),
 }
 
@@ -112,6 +117,6 @@ DATASET_CONFIGS = {
     'mnist-color': {'size': 32, 'channels': 3, 'classes': 10},
     'cifar10': {'size': 32, 'channels': 3, 'classes': 10},
     'cifar100': {'size': 32, 'channels': 3, 'classes': 100},
-    'svhn': {'size': 32, 'channels': 3, 'classes': 10,
-             'collate_fn': _SVHN_COLLATE_FN}
+    'svhn': {'size': 32, 'channels': 3, 'classes': 10},
+
 }

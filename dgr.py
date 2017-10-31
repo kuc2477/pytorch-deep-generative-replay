@@ -110,6 +110,14 @@ class Scholar(GenerativeMixin, nn.Module):
             solver_iterations=1000,
             solver_training_callbacks=None,
             collate_fn=None):
+        # scholar and previous datasets cannot be given at the same time.
+        mutex_condition_infringed = all([
+            scholar is not None,
+            bool(previous_datasets)
+        ])
+        assert not mutex_condition_infringed, (
+            'scholar and previous datasets cannot be given at the same time'
+        )
 
         # train the generator of the scholar.
         self._train_batch_trainable_with_replay(
@@ -146,15 +154,9 @@ class Scholar(GenerativeMixin, nn.Module):
             self, trainable, dataset, scholar=None, previous_datasets=None,
             importance_of_new_task=.5, batch_size=32, iterations=1000,
             training_callbacks=None, collate_fn=None):
-
-        # scholar and previous datasets cannot be given at the same time.
-        mutex_condition_infringed = all([
-            scholar is not None,
-            bool(previous_datasets)
-        ])
-        assert not mutex_condition_infringed, (
-            'scholar and previous datasets cannot be given at the same time'
-        )
+        # do not train the model when given non-positive iterations.
+        if iterations <= 0:
+            return
 
         # create data loaders.
         data_loader = iter(utils.get_data_loader(

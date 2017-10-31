@@ -35,7 +35,7 @@ parser.add_argument('--solver-reducing-layers', type=int, default=3)
 parser.add_argument('--solver-channel-size', type=int, default=1024)
 
 parser.add_argument('--generator-c-updates-per-g-update', type=int, default=5)
-parser.add_argument('--generator-iterations', type=int, default=1)
+parser.add_argument('--generator-iterations', type=int, default=3000)
 parser.add_argument('--solver-iterations', type=int, default=1000)
 parser.add_argument('--importance-of-new-task', type=float, default=.3)
 parser.add_argument('--lr', type=float, default=1e-04)
@@ -46,6 +46,8 @@ parser.add_argument('--batch-size', type=int, default=32)
 parser.add_argument('--test-size', type=int, default=1024)
 parser.add_argument('--sample-size', type=int, default=36)
 
+parser.add_argument('--sample-log', action='store_true')
+parser.add_argument('--sample-log-interval', type=int, default=300)
 parser.add_argument('--image-log-interval', type=int, default=100)
 parser.add_argument('--eval-log-interval', type=int, default=50)
 parser.add_argument('--loss-log-interval', type=int, default=30)
@@ -145,15 +147,24 @@ if __name__ == '__main__':
     if cuda:
         scholar.cuda()
 
+    # determine whether we need to train the generator or not.
+    train_generator = (
+        args.replay_mode == 'generative-replay' or
+        args.sample_log
+    )
+
     # run the experiment.
     if args.train:
         train(
             scholar, train_datasets, test_datasets,
             replay_mode=args.replay_mode,
             generator_lambda=args.generator_lambda,
-            generator_iterations=args.generator_iterations,
+            generator_iterations=(
+                args.generator_iterations if train_generator else 0
+            ),
             generator_c_updates_per_g_update=(
-                args.generator_c_updates_per_g_update),
+                args.generator_c_updates_per_g_update
+            ),
             solver_iterations=args.solver_iterations,
             importance_of_new_task=args.importance_of_new_task,
             batch_size=args.batch_size,
@@ -164,11 +175,14 @@ if __name__ == '__main__':
             loss_log_interval=args.loss_log_interval,
             eval_log_interval=args.eval_log_interval,
             image_log_interval=args.image_log_interval,
+            sample_log_interval=args.sample_log_interval,
+            sample_log=args.sample_log,
+            sample_dir=args.sample_dir,
             checkpoint_dir=args.checkpoint_dir,
             collate_fn=utils.label_squeezing_collate_fn,
             cuda=cuda
         )
     else:
-        path = os.path.join(args.sample_dir, '{}-sample'.format(wgan.name))
+        path = os.path.join(args.sample_dir, '{}-sample'.format(scholar.name))
         utils.load_checkpoint(scholar, args.checkpoint_dir)
-        utils.test_model(scholar, args.sample_size, path)
+        utils.test_model(scholar.generator, args.sample_size, path)
