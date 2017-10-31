@@ -35,9 +35,9 @@ parser.add_argument('--solver-reducing-layers', type=int, default=3)
 parser.add_argument('--solver-channel-size', type=int, default=1024)
 
 parser.add_argument('--generator-c-updates-per-g-update', type=int, default=5)
-parser.add_argument('--generator-iterations', type=int, default=1500)
+parser.add_argument('--generator-iterations', type=int, default=1)
 parser.add_argument('--solver-iterations', type=int, default=1000)
-parser.add_argument('--importance-of-new-task', type=float, default=.35)
+parser.add_argument('--importance-of-new-task', type=float, default=.3)
 parser.add_argument('--lr', type=float, default=1e-04)
 parser.add_argument('--beta1', type=float, default=0.5)
 parser.add_argument('--beta2', type=float, default=0.9)
@@ -165,6 +165,7 @@ if __name__ == '__main__':
             eval_log_interval=args.eval_log_interval,
             image_log_interval=args.image_log_interval,
             checkpoint_dir=args.checkpoint_dir,
+            collate_fn=utils.label_squeezing_collate_fn,
             cuda=cuda
         )
     else:

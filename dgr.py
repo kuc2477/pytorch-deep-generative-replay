@@ -55,6 +55,7 @@ class Solver(BatchTrainable):
     def train_a_batch(self, x, y, x_=None, y_=None, importance_of_new_task=.5):
         assert x_ is None or x.size() == x_.size()
         assert y_ is None or y.size() == y_.size()
+
         # clear gradients.
         batch_size = x.size(0)
         self.optimizer.zero_grad()
@@ -107,24 +108,29 @@ class Scholar(GenerativeMixin, nn.Module):
             generator_iterations=2000,
             generator_training_callbacks=None,
             solver_iterations=1000,
-            solver_training_callbacks=None):
+            solver_training_callbacks=None,
+            collate_fn=None):
 
         # train the generator of the scholar.
         self._train_batch_trainable_with_replay(
             self.generator, dataset, scholar,
+            previous_datasets=previous_datasets,
             importance_of_new_task=importance_of_new_task,
             batch_size=batch_size,
             iterations=generator_iterations,
             training_callbacks=generator_training_callbacks,
+            collate_fn=collate_fn,
         )
 
         # train the solver of the scholar.
         self._train_batch_trainable_with_replay(
             self.solver, dataset, scholar,
+            previous_datasets=previous_datasets,
             importance_of_new_task=importance_of_new_task,
             batch_size=batch_size,
             iterations=solver_iterations,
             training_callbacks=solver_training_callbacks,
+            collate_fn=collate_fn,
         )
 
     @property
@@ -139,7 +145,7 @@ class Scholar(GenerativeMixin, nn.Module):
     def _train_batch_trainable_with_replay(
             self, trainable, dataset, scholar=None, previous_datasets=None,
             importance_of_new_task=.5, batch_size=32, iterations=1000,
-            training_callbacks=None):
+            training_callbacks=None, collate_fn=None):
 
         # scholar and previous datasets cannot be given at the same time.
         mutex_condition_infringed = all([
@@ -152,11 +158,12 @@ class Scholar(GenerativeMixin, nn.Module):
 
         # create data loaders.
         data_loader = iter(utils.get_data_loader(
-            dataset, batch_size, cuda=self._is_on_cuda()
+            dataset, batch_size, cuda=self._is_on_cuda(),
+            collate_fn=collate_fn,
         ))
         data_loader_previous = iter(utils.get_data_loader(
             ConcatDataset(previous_datasets), batch_size,
-            cuda=self._is_on_cuda(),
+            cuda=self._is_on_cuda(), collate_fn=collate_fn,
         )) if previous_datasets else None
 
         # define a tqdm progress bar.
@@ -174,10 +181,13 @@ class Scholar(GenerativeMixin, nn.Module):
             y = Variable(y).cuda() if cuda else Variable(y)
 
             # sample the replayed training data.
-            x_, y_ = (
-                next(data_loader_previous) if from_previous_datasets else
-                scholar.sample(batch_size) if from_scholar else (None, None)
-            )
+            if from_previous_datasets:
+                x_, y_ = next(data_loader_previous)
+            elif from_scholar:
+                x_, y_ = scholar.sample(batch_size)
+            else:
+                x_ = y_ = None
+
             if x_ is not None and y_ is not None:
                 x_ = Variable(x_).cuda() if cuda else Variable(x_)
                 y_ = Variable(y_).cuda() if cuda else Variable(y_)

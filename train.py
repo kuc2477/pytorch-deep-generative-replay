@@ -20,6 +20,7 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
           eval_log_interval=50,
           image_log_interval=100,
           checkpoint_dir='./checkpoints',
+          collate_fn=None,
           cuda=False):
     # define solver criterion and generators for the scholar model.
     solver_criterion = nn.CrossEntropyLoss()
@@ -90,6 +91,7 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
             generator_training_callbacks=generator_training_callbacks,
             solver_iterations=solver_iterations,
             solver_training_callbacks=solver_training_callbacks,
+            collate_fn=collate_fn,
         )
 
         previous_scholar = (

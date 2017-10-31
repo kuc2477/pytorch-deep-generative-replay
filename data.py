@@ -55,6 +55,10 @@ _SVHN_TRAIN_TRANSFORMS = _SVHN_TEST_TRANSFORMS = [
 ]
 
 
+def _SVHN_COLLATE_FN(batch):
+    __import__('pdb').set_trace()
+
+
 TRAIN_DATASETS = {
     'mnist': lambda: datasets.MNIST(
         './datasets/mnist', train=True, download=True,
@@ -108,5 +112,6 @@ DATASET_CONFIGS = {
     'mnist-color': {'size': 32, 'channels': 3, 'classes': 10},
     'cifar10': {'size': 32, 'channels': 3, 'classes': 10},
     'cifar100': {'size': 32, 'channels': 3, 'classes': 100},
-    'svhn': {'size': 32, 'channels': 3, 'classes': 10}
+    'svhn': {'size': 32, 'channels': 3, 'classes': 10,
+             'collate_fn': _SVHN_COLLATE_FN}
 }

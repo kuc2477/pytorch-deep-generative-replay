@@ -5,12 +5,19 @@ import torch
 from torch import nn
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
+from torch.utils.data.dataloader import default_collate
 
 
-def get_data_loader(dataset, batch_size, cuda=False):
+def label_squeezing_collate_fn(batch):
+    x, y = default_collate(batch)
+    return x, y.long().squeeze()
+
+
+def get_data_loader(dataset, batch_size, cuda=False, collate_fn=None):
     return DataLoader(
         dataset, batch_size=batch_size, shuffle=True,
-        **({'num_workers': 1, 'pin_memory': True} if cuda else {})
+        collate_fn=(collate_fn or default_collate),
+        **({'num_workers': 0, 'pin_memory': True} if cuda else {})
     )
 
 
