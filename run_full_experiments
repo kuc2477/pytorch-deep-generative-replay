@@ -85,7 +85,7 @@ SVHN_MNIST_IMPORTANCE_OF_NEW_TASK=0.4
   --generator-iterations=$SVHN_MNIST_GENERATOR_ITERATIONS \
   --solver-iterations=$SVHN_MNIST_SOLVER_ITERATIONS \
   --importance-of-new-task=$SVHN_MNIST_IMPORTANCE_OF_NEW_TASK \
-  --lr=$SVHN_MNIST_LR
+  --lr=$SVHN_MNIST_LR \
   --sample-log
 
 ./main.py --train \
@@ -93,5 +93,5 @@ SVHN_MNIST_IMPORTANCE_OF_NEW_TASK=0.4
   --replay-mode=none \
   --generator-iterations=$SVHN_MNIST_GENERATOR_ITERATIONS \
   --solver-iterations=$SVHN_MNIST_SOLVER_ITERATIONS \
-  --lr=$SVHN_MNIST_LR
+  --lr=$SVHN_MNIST_LR \
   --sample-log
