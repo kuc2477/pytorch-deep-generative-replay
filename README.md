@@ -86,7 +86,7 @@ $ ./main.py --test --experiment=[permutated-mnist | svhn-mnist | mnist-svhn] --r
 ```
 
 ## Note
-- I failed to find the supplementary materials that the authors mentioned in the paper to contain the experimental details. Thus, I arbitrarily chose a 4-convolutional-layer CNN as a Solver of the Scholar model. If you know where I can find the additional materials of the paper, please let me know through the Github issue.
+- I failed to find the supplementary materials that the authors mentioned in the paper to contain the experimental details. Thus, I arbitrarily chose a 4-convolutional-layer CNN as a Solver of the Scholar in this project. If you know where I can find the additional materials of the paper, please let me know through the Github issue.
 
 ## Reference
 - [Continual Learning with Deep Generative Replay, arxiv:1705.08690](https://arxiv.org/abs/1705.08690)
