@@ -15,10 +15,6 @@ PyTorch implementation of [Continual Learning with Deep Generative Replay, NIPS 
 
 ### Continual Learning on MNIST-SVHN
 
-- Test precisions **without any replay** (*left*), **with exact replay** (*middle*), and **with Deep Generative Replay** (*right*).
-
-<img width="250" style="margin: 5px;" src="./arts/mnist-svhn-none.png" /> <img width="250" style="margin: 5px;" src="./arts/mnist-svhn-exact-replay.png" /> <img width="250" style="margin: 5px;" src="./arts/mnist-svhn-generative-replay.png" />
-
 - Generated samples from the scholar trained **without any replay** (*left*) and **with Deep Generative Replay** (*right*).
 
 <img width="250" style="margin: 5px;" src="./arts/mnist-svhn-none-sample.jpg" /> <img width="250" style="margin: 5px;" src="./arts/mnist-svhn-generative-replay-sample.jpg" /> 
@@ -26,6 +22,10 @@ PyTorch implementation of [Continual Learning with Deep Generative Replay, NIPS 
 - Training scholar's generator **without any replay** (*left*) and **with Deep Generative Replay** (*right*).
 
 <img width="250" style="margin: 5px;" src="./arts/mnist-svhn-none.gif" /> <img width="250" style="margin: 5px;" src="./arts/mnist-svhn-generative-replay.gif" /> 
+
+- Test precisions **without any replay** (*left*), **with exact replay** (*middle*), and **with Deep Generative Replay** (*right*).
+
+<img width="250" style="margin: 5px;" src="./arts/mnist-svhn-none.png" /> <img width="250" style="margin: 5px;" src="./arts/mnist-svhn-exact-replay.png" /> <img width="250" style="margin: 5px;" src="./arts/mnist-svhn-generative-replay.png" />
 
 ### Continual Learning on SVHN-MNIST
 
