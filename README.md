@@ -79,7 +79,7 @@ $ python -m visdom.server &
 $ ./main.py --train --experiment=[permutated-mnist | svhn-mnist | mnist-svhn] --replay-mode=[exact-replay | generative-replay | none]
 ```
 
-### Generate Images from a Learned Scholar
+### Generate Images from the learned Scholar
 ```shell
 $ # Run the command below and visit the "samples" directory
 $ ./main.py --test --experiment=[permutated-mnist | svhn-mnist | mnist-svhn] --replay-mode=[exact-replay | generative-replay | none]
