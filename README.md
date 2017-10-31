@@ -24,7 +24,7 @@ $ usage: PyTorch implementation of Deep Generative Replay [-h]
                                                           [--mnist-permutation-number MNIST_PERMUTATION_NUMBER]
                                                           [--mnist-permutation-seed MNIST_PERMUTATION_SEED]
                                                           --replay-mode
-                                                          {exect-replay,generative-replay,none}
+                                                          {exact-replay,generative-replay,none}
                                                           [--generator-z-size GENERATOR_Z_SIZE]
                                                           [--generator-c-channel-size GENERATOR_C_CHANNEL_SIZE]
                                                           [--generator-g-channel-size GENERATOR_G_CHANNEL_SIZE]
@@ -61,17 +61,17 @@ $ ./run_full_experiments
 ```shell
 # To Run a visdom server and conduct a desired experiment
 $ python -m visdom.server &
-$ ./main.py --train --experiment=[permutated-mnist | svhn-mnist | mnist-svhn] --replay-mode=[exect-replay | generative-replay | none]
+$ ./main.py --train --experiment=[permutated-mnist | svhn-mnist | mnist-svhn] --replay-mode=[exact-replay | generative-replay | none]
 ```
 
 ### Generate Images from a Learned Scholar
 ```shell
 $ # Run the command below and visit the "samples" directory
-$ ./main.py --test --experiment=[permutated-mnist | svhn-mnist | mnist-svhn] --replay-mode=[exect-replay | generative-replay | none]
+$ ./main.py --test --experiment=[permutated-mnist | svhn-mnist | mnist-svhn] --replay-mode=[exact-replay | generative-replay | none]
 ```
 
 ## Notes
-- I couldn't find the supplementary materials that the authors mentioned in the paper to contain the experimental details. Thus, I arbitrarily chose a 4-convolutional-layer CNN as a default solver model. Please let me know if you know where the materials are.
+- I couldn't find the supplementary materials that the authors mentioned in the paper to contain the experimental details. Thus, I arbitrarily chose a 4-convolutional-layer CNN as a default solver model. Please let me know if you know where I can find the materials.
 
 ## Reference
 - [Continual Learning with Deep Generative Replay, arxiv:1705.08690](https://arxiv.org/abs/1705.08690)

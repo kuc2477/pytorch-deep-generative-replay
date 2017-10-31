@@ -1,3 +1,4 @@
+import os.path
 import copy
 from torch import optim
 from torch import nn
@@ -19,6 +20,9 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
           loss_log_interval=30,
           eval_log_interval=50,
           image_log_interval=100,
+          sample_log_interval=300,
+          sample_log=False,
+          sample_dir='./samples',
           checkpoint_dir='./checkpoints',
           collate_fn=None,
           cuda=False):
@@ -58,11 +62,14 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
         generator_training_callbacks = [_generator_training_callback(
             loss_log_interval=loss_log_interval,
             image_log_interval=image_log_interval,
+            sample_log_interval=sample_log_interval,
+            sample_log=sample_log,
+            sample_dir=sample_dir,
+            sample_size=sample_size,
             current_task=task,
             total_tasks=len(train_datasets),
             total_iterations=generator_iterations,
             batch_size=batch_size,
-            sample_size=sample_size,
             replay_mode=replay_mode,
             env=scholar.name,
         )]
@@ -77,6 +84,7 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
             test_datasets=test_datasets,
             replay_mode=replay_mode,
             cuda=cuda,
+            collate_fn=collate_fn,
             env=scholar.name,
         )]
 
@@ -99,7 +107,7 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
             None
         )
         previous_datasets = (
-            train_datasets[:task-1] if replay_mode == 'exact-replay' else
+            train_datasets[:task] if replay_mode == 'exact-replay' else
             None
         )
 
@@ -113,6 +121,9 @@ def train(scholar, train_datasets, test_datasets, replay_mode,
 def _generator_training_callback(
         loss_log_interval,
         image_log_interval,
+        sample_log_interval,
+        sample_log,
+        sample_dir,
         current_task,
         total_tasks,
         total_iterations,
@@ -149,13 +160,21 @@ def _generator_training_callback(
                 -result['c_loss'], 'generator w distance', iteration, env=env
             )
 
-        # log the sampled images of the generator.
+        # log the generated images of the generator.
         if iteration % image_log_interval == 0:
             visual.visualize_images(
                 generator.sample(sample_size).data,
                 'generated samples ({replay_mode})'
                 .format(replay_mode=replay_mode), env=env,
             )
+
+        # log the sample images of the generator
+        if iteration % sample_log_interval == 0 and sample_log:
+            utils.test_model(generator, sample_size, os.path.join(
+                sample_dir,
+                env + '-sample-logs',
+                str(iteration)
+            ), verbose=False)
 
     return cb
 
@@ -171,6 +190,7 @@ def _solver_training_callback(
         test_datasets,
         cuda,
         replay_mode,
+        collate_fn,
         env):
 
     def cb(solver, progress, batch_index, result):
@@ -203,7 +223,7 @@ def _solver_training_callback(
             precs = [
                 utils.validate(
                     solver, test_datasets[i], test_size=test_size,
-                    cuda=cuda, verbose=False,
+                    cuda=cuda, verbose=False, collate_fn=collate_fn,
                 ) if i+1 <= current_task else 0 for i in
                 range(len(test_datasets))
             ]

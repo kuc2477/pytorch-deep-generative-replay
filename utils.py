@@ -49,17 +49,23 @@ def load_checkpoint(model, model_dir):
     model.load_state_dict(checkpoint['state'])
 
 
-def test_model(model, sample_size, path):
+def test_model(model, sample_size, path, verbose=True):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     torchvision.utils.save_image(
-        model.sample_image(sample_size).data,
-        path + '.jpg'
+        model.sample(sample_size).data,
+        path + '.jpg',
+        nrow=6,
     )
-    print('=> generated sample images at "{}".'.format(path))
+    if verbose:
+        print('=> generated sample images at "{}".'.format(path))
 
 
-def validate(model, dataset, test_size=256, cuda=False, verbose=True):
-    data_loader = get_data_loader(dataset, 32, cuda=cuda)
+def validate(model, dataset, test_size=1024,
+             cuda=False, verbose=True, collate_fn=None):
+    data_loader = get_data_loader(
+        dataset, 128, cuda=cuda,
+        collate_fn=(collate_fn or default_collate),
+    )
     total_tested = 0
     total_correct = 0
     for data, labels in data_loader:
@@ -71,6 +77,7 @@ def validate(model, dataset, test_size=256, cuda=False, verbose=True):
         labels = Variable(labels).cuda() if cuda else Variable(labels)
         scores = model(data)
         _, predicted = torch.max(scores, 1)
+
         # update statistics.
         total_correct += (predicted == labels).sum().data[0]
         total_tested += len(data)
