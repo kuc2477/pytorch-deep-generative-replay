@@ -136,7 +136,10 @@ if __name__ == '__main__':
     label = '{experiment}-{replay_mode}-r{importance_of_new_task}'.format(
         experiment=experiment,
         replay_mode=args.replay_mode,
-        importance_of_new_task=args.importance_of_new_task,
+        importance_of_new_task=(
+            1 if args.replay_mode == 'none' else
+            args.importance_of_new_task
+        ),
     )
     scholar = Scholar(label, generator=wgan, solver=cnn)
 
