@@ -9,13 +9,13 @@ PyTorch implementation of [Continual Learning with Deep Generative Replay, NIPS 
 
 ### Continual Learning on Permutated MNISTs
 
-- Test precisions **without any replay** (*left*), **with exact replay** (*middle*), and **with Deep Generative Replay** (*right*).
+- Test precisions **without replay** (*left*), **with exact replay** (*middle*), and **with Deep Generative Replay** (*right*).
 
 <img width="250" style="margin: 5px;" src="./arts/permutated-mnist-none.png" /> <img width="250" style="margin: 5px;" src="./arts/permutated-mnist-exact-replay.png" /> <img width="250" style="margin: 5px;" src="./arts/permutated-mnist-generative-replay.png" />
 
 ### Continual Learning on MNIST-SVHN
 
-- Test precisions **without any replay** (*left*), **with exact replay** (*middle*), and **with Deep Generative Replay** (*right*).
+- Test precisions **without replay** (*left*), **with exact replay** (*middle*), and **with Deep Generative Replay** (*right*).
 
 <img width="250" style="margin: 5px;" src="./arts/mnist-svhn-none.png" /> <img width="250" style="margin: 5px;" src="./arts/mnist-svhn-exact-replay.png" /> <img width="250" style="margin: 5px;" src="./arts/mnist-svhn-generative-replay.png" />
 
@@ -23,21 +23,21 @@ PyTorch implementation of [Continual Learning with Deep Generative Replay, NIPS 
 
 <img width="250" style="margin: 5px;" src="./arts/mnist-svhn-none-sample.jpg" /> <img width="250" style="margin: 5px;" src="./arts/mnist-svhn-generative-replay-sample.jpg" /> 
 
-- Training scholar's generator **without any replay** (*left*) and **with Deep Generative Replay** (*right*).
+- Training scholar's generator **without replay** (*left*) and **with Deep Generative Replay** (*right*).
 
 <img width="250" style="margin: 5px;" src="./arts/mnist-svhn-none.gif" /> <img width="250" style="margin: 5px;" src="./arts/mnist-svhn-generative-replay.gif" /> 
 
 ### Continual Learning on SVHN-MNIST
 
-- Test precisions **without any replay** (*left*), **with exact replay** (*middle*), and **with Deep Generative Replay** (*right*).
+- Test precisions **without replay** (*left*), **with exact replay** (*middle*), and **with Deep Generative Replay** (*right*).
 
 <img width="250" style="margin: 5px;" src="./arts/svhn-mnist-none.png" /> <img width="250" style="margin: 5px;" src="./arts/svhn-mnist-exact-replay.png" /> <img width="250" style="margin: 5px;" src="./arts/svhn-mnist-generative-replay.png" />
 
-- Generated samples from the scholar trained **without any replay** (*left*) and **with Deep Generative Replay** (*right*).
+- Generated samples from the scholar trained **without replay** (*left*) and **with Deep Generative Replay** (*right*).
 
 <img width="250" style="margin: 5px;" src="./arts/svhn-mnist-none-r1-sample.jpg" /> <img width="250" style="margin: 5px;" src="./arts/svhn-mnist-generative-replay-r0.4-sample.jpg" /> 
 
-- Training scholar's generator **without any replay** (*left*) and **with Deep Generative Replay** (*right*).
+- Training scholar's generator **without replay** (*left*) and **with Deep Generative Replay** (*right*).
 
 <img width="250" style="margin: 5px;" src="./arts/svhn-mnist-none.gif" /> <img width="250" style="margin: 5px;" src="./arts/svhn-mnist-generative-replay.gif" /> 
 
